@@ -11,6 +11,10 @@ jobs:
   deploy:
     environment: development
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/envs/dev
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -35,6 +39,10 @@ jobs:
     needs: deploy
     environment: development
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/envs/dev
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
