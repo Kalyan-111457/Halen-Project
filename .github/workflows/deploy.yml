@@ -7,9 +7,9 @@ on:
     branches:
       - develop
 jobs:
-environment:
-  name: development
+
   deploy:
+    environment: development
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
