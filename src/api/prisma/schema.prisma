@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DocumentStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  fullName   String   @db.VarChar(50)
+  email      String   @unique @db.VarChar(50)
+  password   String   @unique @db.VarChar(50)
+  phone      String   @db.VarChar(10)
+  address    String   @db.VarChar(1000)
+  isdeleted  Boolean  @default(false)
+
+  projects   Project[]
+  chats      Chat[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(100)
+  description String?  @db.Text
+  thumbnail   String?  @db.VarChar(500)
+
+  isdeleted   Boolean  @default(false)
+
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+
+  documents   Document[]
+  chats       Chat[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Document {
+  id           Int      @id @default(autoincrement())
+  fileName     String   @db.VarChar(255)
+  fileType     String   @db.VarChar(50)
+  fileUrl      String   @db.VarChar(1000)
+
+  fileSize     Int
+
+  content      String?  @db.Text
+  summary      String?  @db.Text
+
+  status       String   @default("PROCESSING")
+  isdeleted    Boolean  @default(false)
+
+  projectId    Int
+  project      Project  @relation(fields: [projectId], references: [id])
+
+  chunks       Chunk[]
+  chatMessages ChatMessage[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Chunk {
+  id          Int      @id @default(autoincrement())
+  content     String   @db.Text
+  chunkIndex  Int
+
+  embedding   Float[]
+
+  documentId  Int
+  document    Document @relation(fields: [documentId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Chat {
+  id          Int      @id @default(autoincrement())
+  title       String?  @db.VarChar(100)
+
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+
+  projectId   Int
+  project     Project  @relation(fields: [projectId], references: [id])
+
+  messages    ChatMessage[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChatMessage {
+  id          Int       @id @default(autoincrement())
+  role        String    @db.VarChar(20)
+  content     String    @db.Text
+
+  chatId      Int
+  chat        Chat      @relation(fields: [chatId], references: [id])
+
+  documentId  Int?
+  document    Document? @relation(fields: [documentId], references: [id])
+
+  createdAt   DateTime  @default(now())
+}
