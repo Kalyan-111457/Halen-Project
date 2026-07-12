@@ -1,3 +1,5 @@
+"use client";
+
 import UserService from "@/services/UserService";
 import { useAppDispatch, useAppSelector } from "@/src/redux/hooks";
 import { setError, setLoading, setUsers } from "@/src/redux/slices/userSlice";
@@ -27,11 +29,11 @@ export default function Home() {
       catch (error) {
 
         if (error instanceof Error) {
-          setError(error.message);
+          dispatch(setError(error.message));
         }
       }
       finally {
-        setLoading(false)
+        dispatch(setLoading(false))
       }
     }
     fetchusers();
