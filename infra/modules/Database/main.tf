@@ -25,7 +25,7 @@ resource "aws_security_group" "db_access" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["103.120.51.102/32"] # Replace with your trusted IP range
+    cidr_blocks = ["49.238.33.244/32"] # Replace with your trusted IP range
   }
 
   egress {
