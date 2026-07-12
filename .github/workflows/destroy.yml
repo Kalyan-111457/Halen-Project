@@ -1,0 +1,34 @@
+name: Terraform Destroy
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  terraform-destroy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: infra/src/dev
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform State List
+        run: terraform state list
+
+      - name: Destroy Selected Resources
+        run: |
+          terraform destroy -auto-approve \
+            -target=module.database.aws_db_instance.postgres \
+            -target=module.database.aws_security_group.db_access \
+            -target=module.s3_bucket.aws_s3_bucket.example
